@@ -1,0 +1,20 @@
+{
+  "name": "@pipeworx/mcp-nosdeputes-fr",
+  "version": "0.1.0",
+  "description": "NosDéputés.fr MCP — civic-tech mirror of the French Assemblée nationale",
+  "type": "module",
+  "main": "src/index.ts",
+  "types": "src/index.ts",
+  "keywords": ["mcp", "mcp-server", "model-context-protocol", "pipeworx", "nosdeputes-fr"],
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/pipeworx-io/mcp-nosdeputes-fr"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "typescript": "^5.7.0"
+  }
+}
