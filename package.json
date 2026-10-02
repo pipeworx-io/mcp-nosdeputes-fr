@@ -1,6 +1,6 @@
 {
   "name": "@pipeworx/mcp-nosdeputes-fr",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "description": "NosDéputés.fr MCP — civic-tech mirror of the French Assemblée nationale",
   "type": "module",
   "main": "src/index.ts",
@@ -26,7 +26,7 @@
     "@cloudflare/workers-types": "^4.20260405.1"
   },
   "pipeworx": {
-    "sourceHash": "v1-ced6f1d833051eef404518008314e6480e18cb4fa8673b91d1b19698971754f5",
-    "sourceCommit": "97740c6ee04c8acbfe7dddcacfde9e88ff2b9ca0"
+    "sourceHash": "v1-3d6682fe9dd76aa22e8b97224cb7c72e46b9ec3f2ec538305cfbf8144d858ea7",
+    "sourceCommit": "e24dc8ff6a0110675ba7e3fddac406cd755bed9b"
   }
 }

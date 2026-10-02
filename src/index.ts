@@ -812,7 +812,10 @@ const tools: McpToolExport['tools'] = [
   },
   {
     name: 'list_groups',
-    description: 'Political groups in the assembly.',
+    description:
+      'Political groups (groupes parlementaires) of the French Assemblée nationale from NosDéputés: ' +
+      'id, slug, name, acronym, colour, seat order and NosDéputés URLs for each group. Defaults to the ' +
+      '16th legislature (2022–2024); pass legislature 15 or 14 for earlier ones.',
     inputSchema: {
       type: 'object',
       properties: { legislature: { type: 'string' } },
@@ -866,8 +869,33 @@ async function callTool(name: string, args: Record<string, unknown>): Promise<un
       // That is the worst failure we can pass on, so reject the shape.
       return ndFetch(`${base}/votes/json?${params}`, 'votes');
     }
-    case 'list_groups':
-      return ndFetch(`${base}/organismes/groupe/json`, 'groups');
+    case 'list_groups': {
+      // Upstream answers `{organismes:[{organisme:{…}}]}`. The declared outputSchema
+      // promised `{count, items}` from the day it was generated and the code never
+      // produced it — the nightly schema check caught the mismatch on the one
+      // morning the 16th-legislature host answered 200 (fleet #2665). Unwrap to
+      // the declared shape, and reject anything that is not the groups list
+      // (the same "200 with the wrong object" trap `list_votes` guards against).
+      const data = (await ndFetch(`${base}/organismes/groupe/json`, 'groups')) as {
+        organismes?: unknown;
+      };
+      if (!data || !Array.isArray(data.organismes)) {
+        throw new Error(
+          'upstream_down: NosDéputés answered without an `organismes` list for this legislature. ' +
+            'The 16th-legislature host (www) intermittently 500s on this dataset; legislature "14" ' +
+            '(2012–2017) answers reliably. Official source: data.assemblee-nationale.fr.',
+        );
+      }
+      const items = (data.organismes as Array<Record<string, unknown>>).map((r) =>
+        r && typeof r === 'object' && 'organisme' in r ? (r.organisme as Record<string, unknown>) : r,
+      );
+      return {
+        count: items.length,
+        legislature: String(args.legislature ?? DEFAULT_LEGISLATURE),
+        source: `${base}/organismes/groupe/json`,
+        items,
+      };
+    }
     default:
       throw new Error(`Unknown tool: ${name}`);
   }
